@@ -30,6 +30,10 @@ public class KingPongGameSprite extends Texture {
 
     int hit = 0;
 
+    StringBuffer teste;
+
+    boolean enaableOverlap;
+
     public KingPongGameSprite(String internalPath) {
         super(internalPath);
 
@@ -37,6 +41,8 @@ public class KingPongGameSprite extends Texture {
         bbox.width = this.getWidth();
         bbox.height = this.getHeight();
         touchPos = new Vector3();
+        teste = new StringBuffer();
+        enaableOverlap = true;
     }
 
     public void calcpos(){
@@ -46,16 +52,20 @@ public class KingPongGameSprite extends Texture {
         if(getBboxY() > maxY) incY = - abs(incY);
         if(getBboxY() < minY) incY = abs(incY);
 
+        if(getBboxX() > 200 && getBboxX() < 400) enaableOverlap = true;
+
         if(hit > 4) {
-            if(incX > 0) incX += 30;
-            if(incX < 0) incX -= 30;
+            if(incX > 0) incX += 50;
+            if(incX < 0) incX -= 50;
             hit = 0;
-            Gdx.app.log("incX ", new StringBuffer().append(incX).toString());
+            teste.setLength(0);
+            Gdx.app.log("incX ", teste.append(incX).toString());
         }
     }
 
     public boolean checkOverlap(KingPongGameSprite temp){
-        if(bbox.overlaps(temp.getBbox())) {
+        if(bbox.overlaps(temp.getBbox()) && enaableOverlap) {
+            enaableOverlap = false;
             incX = -incX;
             hit += 1;
             // Se o centro da bola for mais alto que o da raquete  + offset incrementa incY
@@ -67,14 +77,23 @@ public class KingPongGameSprite extends Texture {
 
     public int checkPoint() {
 
-        if(bbox.x + bbox.width > getMaxX()+8) {
-            Gdx.app.log("Ponto ", "jogador esquerdo");
+//        if(bbox.x > getMaxX() + 20) {
+        if(bbox.x > 800) {
+            teste.setLength(0);
+            teste.append("bbox.x ").append(bbox.x);
+            teste.append("bbox.width ").append(bbox.width);
+            teste.append("getMaxX ").append(getMaxX());
+            Gdx.app.log("Ponto jogador esquerdo", teste.toString());
             setBboxX(400);
             setIncX(200);
             return 1;
         }
-        if(bbox.x < getMinX()-8) {
-            Gdx.app.log("Ponto ", "jogador direito");
+//        if(bbox.x + bbox.getWidth() < getMinX()) {
+        if(bbox.x  < 0) {
+            teste.setLength(0);
+            teste.append("bbox.x ").append(bbox.x);
+            teste.append("getMinX ").append(getMinX());
+            Gdx.app.log("Ponto jogador direito", teste.toString());
             setBboxX(400);
             setIncX(-200);
             return 2;
